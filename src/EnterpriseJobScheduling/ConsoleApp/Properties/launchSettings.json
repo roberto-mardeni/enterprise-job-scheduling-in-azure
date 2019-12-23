@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "ConsoleApp": {
+      "commandName": "Project",
+      "environmentVariables": {
+        "ConsoleAppName": "My First Console App"
+      }
+    }
+  }
+}
