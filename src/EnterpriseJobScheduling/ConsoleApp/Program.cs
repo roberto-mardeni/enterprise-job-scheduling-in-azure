@@ -1,4 +1,9 @@
-﻿using System;
+﻿using JobLibrary;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using System;
+using System.IO;
 
 namespace ConsoleApp
 {
@@ -6,9 +11,25 @@ namespace ConsoleApp
     {
         static void Main(string[] args)
         {
-            string name = Environment.GetEnvironmentVariable("ConsoleAppName");
+            var loggingConfiguration = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("logging.json", optional: false, reloadOnChange: true)
+                .Build();
 
-            Console.WriteLine($"Hello World, from {name}, at {DateTime.Now}!");
+            var loggerFactory = LoggerFactory.Create(builder =>
+            {
+                builder
+                    .AddConfiguration(loggingConfiguration.GetSection("Logging"))
+                    .AddFilter("ConsoleApp.Program", LogLevel.Debug)
+                    .AddConsole();
+            });
+
+            using (loggerFactory)
+            {
+                var logger = loggerFactory.CreateLogger<Program>();
+
+                new BasicJob().Execute(logger);
+            };
         }
     }
 }
