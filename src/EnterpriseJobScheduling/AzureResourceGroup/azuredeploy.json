@@ -168,11 +168,18 @@
           "appSettings": [
             {
               "name": "FUNCTIONS_EXTENSION_VERSION",
+              "slotSetting": false,
               "value": "~2"
             },
             {
               "name": "FUNCTIONS_WORKER_RUNTIME",
+              "slotSetting": false,
               "value": "dotnet"
+            },
+            {
+              "name": "ConsoleAppName",
+              "slotSetting": false,
+              "value": "My Console App inside an Azure Function"
             }
           ]
         }
@@ -217,11 +224,18 @@
           "appSettings": [
             {
               "name": "FUNCTIONS_EXTENSION_VERSION",
+              "slotSetting": false,
               "value": "~2"
             },
             {
               "name": "FUNCTIONS_WORKER_RUNTIME",
-              "value": "dotnet"
+              "slotSetting": false,
+              "value": "powershell"
+            },
+            {
+              "name": "ConsoleAppName",
+              "slotSetting": false,
+              "value": "My Console App inside a PowerShell Function"
             }
           ]
         }
