@@ -2,33 +2,31 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "sites_myfirstconsoleapp_name": {
+    "dotnetFunctionAppName": {
       "defaultValue": "myfirstconsoleapp",
       "type": "string"
     },
-    "sites_mypowershellconsoleapp_name": {
+    "powershellFunctionAppName": {
       "defaultValue": "mypowershellconsoleapp",
       "type": "string"
     },
-    "components_myfirstconsoleapp_name": {
-      "defaultValue": "myfirstconsoleapp",
-      "type": "string"
-    },
-    "serverfarms_ASP_EnterpriseScheduling_8715_name": {
+    "appServicePlanName": {
       "defaultValue": "ASP-EnterpriseScheduling-8715",
       "type": "string"
     },
-    "storageAccounts_storageaccountenter9fae_name": {
+    "storageAccountName": {
       "defaultValue": "storageaccountenter9fae",
       "type": "string"
     }
   },
-  "variables": {},
+  "variables": {
+    "insightsComponentName":  "functionApps"
+  },
   "resources": [
     {
       "type": "microsoft.insights/components",
       "apiVersion": "2015-05-01",
-      "name": "[parameters('components_myfirstconsoleapp_name')]",
+      "name": "[variables('insightsComponentName')]",
       "location": "eastus",
       "kind": "web",
       "properties": {
@@ -40,7 +38,7 @@
     {
       "type": "Microsoft.Storage/storageAccounts",
       "apiVersion": "2019-06-01",
-      "name": "[parameters('storageAccounts_storageaccountenter9fae_name')]",
+      "name": "[parameters('storageAccountName')]",
       "location": "eastus",
       "sku": {
         "name": "Standard_LRS",
@@ -73,7 +71,7 @@
     {
       "type": "Microsoft.Web/serverfarms",
       "apiVersion": "2018-02-01",
-      "name": "[parameters('serverfarms_ASP_EnterpriseScheduling_8715_name')]",
+      "name": "[parameters('appServicePlanName')]",
       "location": "East US",
       "sku": {
         "name": "Y1",
@@ -97,9 +95,9 @@
     {
       "type": "Microsoft.Storage/storageAccounts/blobServices",
       "apiVersion": "2019-06-01",
-      "name": "[concat(parameters('storageAccounts_storageaccountenter9fae_name'), '/default')]",
+      "name": "[concat(parameters('storageAccountName'), '/default')]",
       "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_storageaccountenter9fae_name'))]"
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
       ],
       "sku": {
         "name": "Standard_LRS"
@@ -116,9 +114,9 @@
     {
       "type": "Microsoft.Storage/storageAccounts/fileServices",
       "apiVersion": "2019-06-01",
-      "name": "[concat(parameters('storageAccounts_storageaccountenter9fae_name'), '/default')]",
+      "name": "[concat(parameters('storageAccountName'), '/default')]",
       "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_storageaccountenter9fae_name'))]"
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
       ],
       "sku": {
         "name": "Standard_LRS"
@@ -132,27 +130,27 @@
     {
       "type": "Microsoft.Web/sites",
       "apiVersion": "2018-11-01",
-      "name": "[parameters('sites_myfirstconsoleapp_name')]",
+      "name": "[parameters('dotnetFunctionAppName')]",
       "location": "East US",
       "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ASP_EnterpriseScheduling_8715_name'))]"
+        "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
       ],
       "kind": "functionapp",
       "properties": {
         "enabled": true,
         "hostNameSslStates": [
           {
-            "name": "[concat(parameters('sites_myfirstconsoleapp_name'), '.azurewebsites.net')]",
+            "name": "[concat(parameters('dotnetFunctionAppName'), '.azurewebsites.net')]",
             "sslState": "Disabled",
             "hostType": "Standard"
           },
           {
-            "name": "[concat(parameters('sites_myfirstconsoleapp_name'), '.scm.azurewebsites.net')]",
+            "name": "[concat(parameters('dotnetFunctionAppName'), '.scm.azurewebsites.net')]",
             "sslState": "Disabled",
             "hostType": "Repository"
           }
         ],
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ASP_EnterpriseScheduling_8715_name'))]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
         "reserved": false,
         "isXenon": false,
         "hyperV": false,
@@ -166,6 +164,21 @@
         "redundancyMode": "None",
         "siteConfig": {
           "appSettings": [
+            {
+              "name": "AzureWebJobsStorage",
+              "slotSetting": false,
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')),'2015-05-01-preview').key1)]"
+            },
+            {
+              "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+              "slotSetting": false,
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')),'2015-05-01-preview').key1)]"
+            },
+            {
+              "name": "WEBSITE_CONTENTSHARE",
+              "slotSetting": false,
+              "value": "[toLower(parameters('dotnetFunctionAppName'))]"
+            },
             {
               "name": "FUNCTIONS_EXTENSION_VERSION",
               "slotSetting": false,
@@ -188,27 +201,27 @@
     {
       "type": "Microsoft.Web/sites",
       "apiVersion": "2018-11-01",
-      "name": "[parameters('sites_mypowershellconsoleapp_name')]",
+      "name": "[parameters('powershellFunctionAppName')]",
       "location": "East US",
       "dependsOn": [
-        "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ASP_EnterpriseScheduling_8715_name'))]"
+        "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
       ],
       "kind": "functionapp",
       "properties": {
         "enabled": true,
         "hostNameSslStates": [
           {
-            "name": "[concat(parameters('sites_mypowershellconsoleapp_name'), '.azurewebsites.net')]",
+            "name": "[concat(parameters('powershellFunctionAppName'), '.azurewebsites.net')]",
             "sslState": "Disabled",
             "hostType": "Standard"
           },
           {
-            "name": "[concat(parameters('sites_mypowershellconsoleapp_name'), '.scm.azurewebsites.net')]",
+            "name": "[concat(parameters('powershellFunctionAppName'), '.scm.azurewebsites.net')]",
             "sslState": "Disabled",
             "hostType": "Repository"
           }
         ],
-        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ASP_EnterpriseScheduling_8715_name'))]",
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]",
         "reserved": false,
         "isXenon": false,
         "hyperV": false,
@@ -222,6 +235,21 @@
         "redundancyMode": "None",
         "siteConfig": {
           "appSettings": [
+            {
+              "name": "AzureWebJobsStorage",
+              "slotSetting": false,
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')),'2015-05-01-preview').key1)]"
+            },
+            {
+              "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+              "slotSetting": false,
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('storageAccountName'), ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName')),'2015-05-01-preview').key1)]"
+            },
+            {
+              "name": "WEBSITE_CONTENTSHARE",
+              "slotSetting": false,
+              "value": "[toLower(parameters('powershellFunctionAppName'))]"
+            },
             {
               "name": "FUNCTIONS_EXTENSION_VERSION",
               "slotSetting": false,
@@ -244,10 +272,10 @@
     {
       "type": "Microsoft.Web/sites/config",
       "apiVersion": "2018-11-01",
-      "name": "[concat(parameters('sites_myfirstconsoleapp_name'), '/web')]",
+      "name": "[concat(parameters('dotnetFunctionAppName'), '/web')]",
       "location": "East US",
       "dependsOn": [
-        "[resourceId('Microsoft.Web/sites', parameters('sites_myfirstconsoleapp_name'))]"
+        "[resourceId('Microsoft.Web/sites', parameters('dotnetFunctionAppName'))]"
       ],
       "properties": {
         "numberOfWorkers": 1,
@@ -323,10 +351,10 @@
     {
       "type": "Microsoft.Web/sites/config",
       "apiVersion": "2018-11-01",
-      "name": "[concat(parameters('sites_mypowershellconsoleapp_name'), '/web')]",
+      "name": "[concat(parameters('powershellFunctionAppName'), '/web')]",
       "location": "East US",
       "dependsOn": [
-        "[resourceId('Microsoft.Web/sites', parameters('sites_mypowershellconsoleapp_name'))]"
+        "[resourceId('Microsoft.Web/sites', parameters('powershellFunctionAppName'))]"
       ],
       "properties": {
         "numberOfWorkers": 1,
@@ -403,10 +431,10 @@
     {
       "type": "Microsoft.Web/sites/hostNameBindings",
       "apiVersion": "2018-11-01",
-      "name": "[concat(parameters('sites_myfirstconsoleapp_name'), '/', parameters('sites_myfirstconsoleapp_name'), '.azurewebsites.net')]",
+      "name": "[concat(parameters('dotnetFunctionAppName'), '/', parameters('dotnetFunctionAppName'), '.azurewebsites.net')]",
       "location": "East US",
       "dependsOn": [
-        "[resourceId('Microsoft.Web/sites', parameters('sites_myfirstconsoleapp_name'))]"
+        "[resourceId('Microsoft.Web/sites', parameters('dotnetFunctionAppName'))]"
       ],
       "properties": {
         "siteName": "myfirstconsoleapp",
@@ -416,10 +444,10 @@
     {
       "type": "Microsoft.Web/sites/hostNameBindings",
       "apiVersion": "2018-11-01",
-      "name": "[concat(parameters('sites_mypowershellconsoleapp_name'), '/', parameters('sites_mypowershellconsoleapp_name'), '.azurewebsites.net')]",
+      "name": "[concat(parameters('powershellFunctionAppName'), '/', parameters('powershellFunctionAppName'), '.azurewebsites.net')]",
       "location": "East US",
       "dependsOn": [
-        "[resourceId('Microsoft.Web/sites', parameters('sites_mypowershellconsoleapp_name'))]"
+        "[resourceId('Microsoft.Web/sites', parameters('powershellFunctionAppName'))]"
       ],
       "properties": {
         "siteName": "mypowershellconsoleapp",
@@ -429,10 +457,10 @@
     {
       "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
       "apiVersion": "2019-06-01",
-      "name": "[concat(parameters('storageAccounts_storageaccountenter9fae_name'), '/default/azure-webjobs-hosts')]",
+      "name": "[concat(parameters('storageAccountName'), '/default/azure-webjobs-hosts')]",
       "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_storageaccountenter9fae_name'), 'default')]",
-        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_storageaccountenter9fae_name'))]"
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccountName'), 'default')]",
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
       ],
       "properties": {
         "publicAccess": "None"
@@ -441,10 +469,10 @@
     {
       "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
       "apiVersion": "2019-06-01",
-      "name": "[concat(parameters('storageAccounts_storageaccountenter9fae_name'), '/default/azure-webjobs-secrets')]",
+      "name": "[concat(parameters('storageAccountName'), '/default/azure-webjobs-secrets')]",
       "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccounts_storageaccountenter9fae_name'), 'default')]",
-        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_storageaccountenter9fae_name'))]"
+        "[resourceId('Microsoft.Storage/storageAccounts/blobServices', parameters('storageAccountName'), 'default')]",
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
       ],
       "properties": {
         "publicAccess": "None"
@@ -453,10 +481,10 @@
     {
       "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
       "apiVersion": "2019-06-01",
-      "name": "[concat(parameters('storageAccounts_storageaccountenter9fae_name'), '/default/myfirstconsoleapp8093')]",
+      "name": "[concat(parameters('storageAccountName'), '/default/myfirstconsoleapp8093')]",
       "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts/fileServices', parameters('storageAccounts_storageaccountenter9fae_name'), 'default')]",
-        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_storageaccountenter9fae_name'))]"
+        "[resourceId('Microsoft.Storage/storageAccounts/fileServices', parameters('storageAccountName'), 'default')]",
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
       ],
       "properties": {
         "shareQuota": 5120
@@ -465,10 +493,10 @@
     {
       "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
       "apiVersion": "2019-06-01",
-      "name": "[concat(parameters('storageAccounts_storageaccountenter9fae_name'), '/default/mypowershellconsoleapp9908')]",
+      "name": "[concat(parameters('storageAccountName'), '/default/mypowershellconsoleapp9908')]",
       "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts/fileServices', parameters('storageAccounts_storageaccountenter9fae_name'), 'default')]",
-        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_storageaccountenter9fae_name'))]"
+        "[resourceId('Microsoft.Storage/storageAccounts/fileServices', parameters('storageAccountName'), 'default')]",
+        "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccountName'))]"
       ],
       "properties": {
         "shareQuota": 5120

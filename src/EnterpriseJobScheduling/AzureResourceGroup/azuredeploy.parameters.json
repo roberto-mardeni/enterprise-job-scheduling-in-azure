@@ -2,19 +2,16 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "sites_myfirstconsoleapp_name": {
+    "dotnetFunctionAppName": {
       "value": "myfirstconsoleapp2"
     },
-    "sites_mypowershellconsoleapp_name": {
+    "powershellFunctionAppName": {
       "value": "mypowershellconsoleapp2"
     },
-    "components_myfirstconsoleapp_name": {
-      "value": "myfirstconsoleapp2"
-    },
-    "serverfarms_ASP_EnterpriseScheduling_8715_name": {
+    "appServicePlanName": {
       "value": "ASP-EnterpriseScheduling2"
     },
-    "storageAccounts_storageaccountenter9fae_name": {
+    "storageAccountName": {
       "value": "storageaccountenter9fa2"
     }
   }
