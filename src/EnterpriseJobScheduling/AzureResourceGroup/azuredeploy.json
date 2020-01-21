@@ -264,6 +264,11 @@
               "name": "ConsoleAppName",
               "slotSetting": false,
               "value": "My Console App inside a PowerShell Function"
+            },
+            {
+              "name": "WEBSITE_NODE_DEFAULT_VERSION",
+              "slotSetting": false,
+              "value": "10.14.1"
             }
           ]
         }
