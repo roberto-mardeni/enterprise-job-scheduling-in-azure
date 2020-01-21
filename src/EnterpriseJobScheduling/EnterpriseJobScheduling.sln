@@ -11,6 +11,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "JobLibrary", "JobLibrary\Jo
 EndProject
 Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "AzureResourceGroup", "AzureResourceGroup\AzureResourceGroup.deployproj", "{71955D77-44F2-48F7-A524-B649771D7E5C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShellFunctionApp", "PowerShellFunctionApp", "{517015F6-871A-4225-A6D3-7926B232A75E}"
+	ProjectSection(SolutionItems) = preProject
+		PowerShellFunctionApp\function.json = PowerShellFunctionApp\function.json
+		PowerShellFunctionApp\run.ps1 = PowerShellFunctionApp\run.ps1
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
