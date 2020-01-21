@@ -19,6 +19,8 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TimerTrigger1", "TimerTrigger1", "{947C5503-A71F-48ED-BBDB-5BDEB04A058F}"
 	ProjectSection(SolutionItems) = preProject
 		PowerShellFunctionApp\TimerTrigger1\function.json = PowerShellFunctionApp\TimerTrigger1\function.json
+		PowerShellFunctionApp\profile.ps1 = PowerShellFunctionApp\profile.ps1
+		PowerShellFunctionApp\requirements.psd1 = PowerShellFunctionApp\requirements.psd1
 		PowerShellFunctionApp\TimerTrigger1\run.ps1 = PowerShellFunctionApp\TimerTrigger1\run.ps1
 	EndProjectSection
 EndProject
