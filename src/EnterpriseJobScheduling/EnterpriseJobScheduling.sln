@@ -13,8 +13,13 @@ Project("{151D2E53-A2C4-4D7D-83FE-D05416EBD58E}") = "AzureResourceGroup", "Azure
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PowerShellFunctionApp", "PowerShellFunctionApp", "{517015F6-871A-4225-A6D3-7926B232A75E}"
 	ProjectSection(SolutionItems) = preProject
-		PowerShellFunctionApp\function.json = PowerShellFunctionApp\function.json
-		PowerShellFunctionApp\run.ps1 = PowerShellFunctionApp\run.ps1
+		PowerShellFunctionApp\host.json = PowerShellFunctionApp\host.json
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TimerTrigger1", "TimerTrigger1", "{947C5503-A71F-48ED-BBDB-5BDEB04A058F}"
+	ProjectSection(SolutionItems) = preProject
+		PowerShellFunctionApp\TimerTrigger1\function.json = PowerShellFunctionApp\TimerTrigger1\function.json
+		PowerShellFunctionApp\TimerTrigger1\run.ps1 = PowerShellFunctionApp\TimerTrigger1\run.ps1
 	EndProjectSection
 EndProject
 Global
@@ -42,6 +47,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{947C5503-A71F-48ED-BBDB-5BDEB04A058F} = {517015F6-871A-4225-A6D3-7926B232A75E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E1F0B590-71B6-4851-A044-7643193EFCD3}
